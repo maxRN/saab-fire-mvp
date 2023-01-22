@@ -54,9 +54,19 @@ export default function SimpleMap() {
 
     const [corners, setCorners] = useState<{ lat: number, lng: number }[]>([]);
 
-    function onClickOnMap({ lat, lng, event }: onClickProps) {
+    function onClickOnMap({ lat, lng }: onClickProps) {
+        if (mapsAPIref.current === null || mapRef.current === null) {
+            return
+        }
+
+        const marker = new mapsAPIref.current.Marker({
+            position: {
+                lat, lng
+            },
+            map: mapRef.current,
+            title: "Marker " + (corners.length + 1).toString()
+        })
         setCorners((oldState: { lat: number, lng: number }[]) => [...oldState, { lat, lng }])
-        console.log(lat, lng, event)
     }
     type APIProps = {
         map: any
@@ -80,13 +90,6 @@ export default function SimpleMap() {
                 yesIWantToUseGoogleMapApiInternals
                 onGoogleApiLoaded={googleAPILoaded}
             >
-                {corners.map((pos, i) => (
-                    <Marker
-                        lat={pos.lat + 0.0045}
-                        lng={pos.lng - 0.003}
-                        text={"Marker " + (i + 1)}
-                    />
-                ))}
             </GoogleMapReact>
             <button onClick={() => drawPolygon(corners, mapsAPIref, mapRef)} style={{ margin: "1em" }}>
                 Draw polygon
