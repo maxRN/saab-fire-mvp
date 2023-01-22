@@ -71,7 +71,7 @@ export default function SimpleMap() {
 
     return (
         // Important! Always set the container height explicitly
-        <div style={{ height: '80vh', width: '60vw' }}>
+        <div style={{ height: '80vh', width: '60vw', marginBottom: '2em' }}>
             <GoogleMapReact
                 onClick={onClickOnMap}
                 bootstrapURLKeys={{ key: "AIzaSyAj0-b3jl0qxB9vatFCSy9k5WlZsW_k7p4" }}
@@ -88,7 +88,9 @@ export default function SimpleMap() {
                     />
                 ))}
             </GoogleMapReact>
-            <button onClick={() => drawPolygon(corners, mapsAPIref, mapRef)}>Draw polygon</button>
+            <button onClick={() => drawPolygon(corners, mapsAPIref, mapRef)} style={{ margin: "1em" }}>
+                Draw polygon
+            </button>
         </div>
     );
 }
