@@ -22,12 +22,11 @@ type onClickProps = {
     event: string
 }
 
-type Coord = {
-    lat: number
-    lng: number
-}
+function drawPolygon(coords: Coordinate[], setCurrentPoly: any, API: any, map: any) {
+    if (coords.length === 0) {
+        return
+    }
 
-function drawPolygon(coords: Coord[], API: any, map: any) {
     const poly = new API.current.Polygon({
         paths: coords,
         strokeColor: "#FF0000",
@@ -37,7 +36,13 @@ function drawPolygon(coords: Coord[], API: any, map: any) {
         fillOpacity: 0.35,
     });
 
+    setCurrentPoly([]);
     poly.setMap(map.current);
+}
+
+type Coordinate = {
+    lat: number
+    lng: number
 }
 
 export default function SimpleMap() {
@@ -52,7 +57,8 @@ export default function SimpleMap() {
     const mapsAPIref: any = useRef(null);
     const mapRef: any = useRef(null);
 
-    const [corners, setCorners] = useState<{ lat: number, lng: number }[]>([]);
+    // const [corners, setCorners] = useState<{ lat: number, lng: number }[]>([]);
+    const [currentPoly, setCurrentPoly] = useState<Coordinate[]>([]);
 
     function onClickOnMap({ lat, lng }: onClickProps) {
         if (mapsAPIref.current === null || mapRef.current === null) {
@@ -64,9 +70,10 @@ export default function SimpleMap() {
                 lat, lng
             },
             map: mapRef.current,
-            title: "Marker " + (corners.length + 1).toString()
+            title: "Marker " + (currentPoly.length + 1).toString()
         })
-        setCorners((oldState: { lat: number, lng: number }[]) => [...oldState, { lat, lng }])
+        // setCorners((oldState: { lat: number, lng: number }[]) => [...oldState, { lat, lng }])
+        setCurrentPoly((oldState: { lat: number, lng: number }[]) => [...oldState, { lat, lng }])
     }
     type APIProps = {
         map: any
@@ -91,7 +98,8 @@ export default function SimpleMap() {
                 onGoogleApiLoaded={googleAPILoaded}
             >
             </GoogleMapReact>
-            <button onClick={() => drawPolygon(corners, mapsAPIref, mapRef)} style={{ margin: "1em" }}>
+            <span>3 drones available / 4 drones surveying forest</span>
+            <button onClick={() => drawPolygon(currentPoly, setCurrentPoly, mapsAPIref, mapRef)} style={{ margin: "1em" }}>
                 Draw polygon
             </button>
         </div>
