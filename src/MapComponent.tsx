@@ -22,7 +22,7 @@ type onClickProps = {
     event: string
 }
 
-function drawPolygon(coords: Coordinate[], setCurrentPoly: any, API: any, map: any) {
+function drawPolygon(coords: Coordinate[], setCurrentPoly: any,  API: any, map: any) {
     if (coords.length === 0) {
         return
     }
@@ -98,7 +98,6 @@ export default function SimpleMap() {
                 onGoogleApiLoaded={googleAPILoaded}
             >
             </GoogleMapReact>
-            <span>3 drones available / 4 drones surveying forest</span>
             <button onClick={() => drawPolygon(currentPoly, setCurrentPoly, mapsAPIref, mapRef)} style={{ margin: "1em" }}>
                 Draw polygon
             </button>
