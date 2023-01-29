@@ -48,7 +48,7 @@ export function SimpleMap({ polys, setPolys }: SimpleMapProps) {
         lat,
         lng,
       },
-      map: mapRef.current
+      map: mapRef.current,
     });
     // setCorners((oldState: { lat: number, lng: number }[]) => [...oldState, { lat, lng }])
     setCurrentPoly((oldState: { lat: number; lng: number }[]) => [
@@ -69,7 +69,7 @@ export function SimpleMap({ polys, setPolys }: SimpleMapProps) {
 
   return (
     // Important! Always set the container height explicitly
-    <div style={{ height: "80vh", width: "60vw", marginBottom: "2em" }}>
+    <div style={{ height: "80vh", width: "60vw" }}>
       <GoogleMapReact
         onClick={onClickOnMap}
         bootstrapURLKeys={{ key: "AIzaSyAj0-b3jl0qxB9vatFCSy9k5WlZsW_k7p4" }}
@@ -78,21 +78,23 @@ export function SimpleMap({ polys, setPolys }: SimpleMapProps) {
         yesIWantToUseGoogleMapApiInternals
         onGoogleApiLoaded={googleAPILoaded}
       ></GoogleMapReact>
-      <button
-        onClick={() =>
-          createNewPoly(
-            currentPoly,
-            setCurrentPoly,
-            polys,
-            setPolys,
-            mapsAPIref,
-            mapRef
-          )
-        }
-        style={{ margin: "1em" }}
-      >
-        Draw polygon
-      </button>
+      <div id="buttonsNextToMap">
+        <button
+          onClick={() =>
+            createNewPoly(
+              currentPoly,
+              setCurrentPoly,
+              polys,
+              setPolys,
+              mapsAPIref,
+              mapRef
+            )
+          }
+          style={{ margin: "1em" }}
+        >
+          Draw polygon
+        </button>
+      </div>
     </div>
   );
 }
@@ -125,7 +127,11 @@ function createNewPoly(
   // draw marker
   new API.current.Marker({
     position: getCenterOfPolygon(coords),
-    label: "Search Area " + (polys.length + 1).toString(),
+    label: {
+      text: "Search Area " + (polys.length + 1).toString(),
+      color: "#0041FF",
+      fontSize: "20px",
+    },
     map,
   });
 
@@ -133,7 +139,9 @@ function createNewPoly(
   const newPoly: Polygon = {
     path: coords,
     name: (polys.length + 1).toString(),
-    amntDrones: 0
+    centerLat: getCenterOfPolygon(coords).lat.toFixed(10).toString(),
+    centerLon: getCenterOfPolygon(coords).lng.toFixed(10).toString(),
+    amntDrones: 0,
   };
   setPolys((pols) => [...pols, newPoly]);
   setCurrentPoly([]);
