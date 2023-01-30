@@ -5,7 +5,7 @@ import { Coordinate, Polygon } from "./App";
 type onClickProps = {
   lat: number;
   lng: number;
-  event: string;
+  event: MouseEvent;
 };
 
 function getCenterOfPolygon(coords: Coordinate[]): Coordinate {
@@ -14,9 +14,11 @@ function getCenterOfPolygon(coords: Coordinate[]): Coordinate {
   const sum = coords.reduce((acc, curr) => ({
     lat: acc.lat + curr.lat,
     lng: acc.lng + curr.lng,
+    x: 0,
+    y: 0,
   }));
 
-  return { lat: sum.lat / l, lng: sum.lng / l };
+  return { lat: sum.lat / l, lng: sum.lng / l, x: 0, y: 0 };
 }
 
 type SimpleMapProps = {
@@ -38,10 +40,12 @@ export function SimpleMap({ polys, setPolys }: SimpleMapProps) {
 
   const [currentPoly, setCurrentPoly] = useState<Coordinate[]>([]);
 
-  function onClickOnMap({ lat, lng }: onClickProps) {
+  function onClickOnMap({ lat, lng, event }: onClickProps) {
     if (mapsAPIref.current === null || mapRef.current === null) {
       return;
     }
+
+    console.log("map clicked: ", event);
 
     new mapsAPIref.current.Marker({
       position: {
@@ -51,9 +55,9 @@ export function SimpleMap({ polys, setPolys }: SimpleMapProps) {
       map: mapRef.current,
     });
     // setCorners((oldState: { lat: number, lng: number }[]) => [...oldState, { lat, lng }])
-    setCurrentPoly((oldState: { lat: number; lng: number }[]) => [
+    setCurrentPoly((oldState: Coordinate[]) => [
       ...oldState,
-      { lat, lng },
+      { lat, lng, x: event.clientX, y: event.clientY },
     ]);
   }
   type APIProps = {

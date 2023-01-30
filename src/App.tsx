@@ -2,7 +2,13 @@ import { Dispatch, SetStateAction, useState } from "react";
 import "./App.css";
 import { SimpleMap } from "./MapComponent";
 
-async function sendDronePromise(): Promise<string> {
+async function sendDronePromise(poly: Polygon): Promise<string> {
+  console.log("sending coords from first polygon:", poly);
+  const coords = poly.path.map(
+    (coord) => coord.x.toString() + ";" + coord.y.toString()
+  );
+  console.log(coords);
+  const res = await fetch("http://localhost:9090/example?coords=" + coords)
   const sending = new Promise<string>((resolve) => {
     setTimeout(() => {
       console.log("done sending...");
@@ -62,7 +68,7 @@ function App() {
             <div className="card">
               <button
                 style={{ margin: "1em" }}
-                onClick={() => sendToDrone(setLoading)}
+                onClick={() => sendToDrone(setLoading, polys[0])}
               >
                 {loading ? "Sending..." : "Send data to fire flyer."}
               </button>
@@ -115,9 +121,9 @@ function App() {
   );
 }
 
-async function sendToDrone(setLoading: any) {
-  setLoading(true);
-  await sendDronePromise();
+async function sendToDrone(setLoading: any, poly: Polygon) {
+  // setLoading(true);
+  await sendDronePromise(poly);
   setLoading(false);
 }
 
@@ -143,6 +149,8 @@ export type Polygon = {
 export type Coordinate = {
   lat: number;
   lng: number;
+  x: number;
+  y: number;
 };
 
 export default App;
