@@ -1,22 +1,19 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import "./App.css";
+import { LeafletMap } from "./Leaflet";
 import { SimpleMap } from "./MapComponent";
 
-async function sendDronePromise(poly: Polygon): Promise<string> {
+async function sendDronePromise(poly: Polygon): Promise<Response> {
+  if (poly === undefined) {
+    return Promise.resolve(new Response("no polygon"));
+  }
+
   console.log("sending coords from first polygon:", poly);
   const coords = poly.path.map(
     (coord) => coord.x.toString() + ";" + coord.y.toString()
   );
   console.log(coords);
-  const res = await fetch("http://localhost:9090/example?coords=" + coords)
-  const sending = new Promise<string>((resolve) => {
-    setTimeout(() => {
-      console.log("done sending...");
-      resolve("sent successfully!");
-    }, 3000);
-  });
-
-  return sending;
+  return fetch("http://localhost:9090/example?coords=" + coords);
 }
 
 function App() {
@@ -28,7 +25,9 @@ function App() {
 
   const SEARCH_TIME_MIN = 8 * 60;
 
-  return (
+  return <LeafletMap />;
+  {
+    /*
     <div className="App">
       <h1>FyreFlyer Dashboard</h1>
       <div className="main-container">
@@ -118,7 +117,8 @@ function App() {
         </div>
       </div>
     </div>
-  );
+  */
+  }
 }
 
 async function sendToDrone(setLoading: any, poly: Polygon) {
